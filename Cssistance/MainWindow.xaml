@@ -1,0 +1,24 @@
+﻿<Window x:Class="Cssistance.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cef="clr-namespace:CefSharp;assembly=CefSharp.Core"
+        xmlns:hwndhost="clr-namespace:CefSharp.Wpf.HwndHost;assembly=CefSharp.Wpf.HwndHost"
+        xmlns:local="clr-namespace:Cssistance"
+        mc:Ignorable="d"
+        Title="Cssistance" Height="957" Width="1540">
+    <Grid Background="#242424">
+        <Grid Name="BrowserContainer" Margin="0 0 330 0" Background="#242424" Width="Auto" >
+            <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0,1">
+                <hwndhost:ChromiumWebBrowser x:Name="Browser" Address="https://www.chess.com" UIElement.PreviewMouseDown="BrowserContainer_PreviewMouseDown"/>
+            </Border>
+        </Grid>
+        <StackPanel Name="OptionControls" HorizontalAlignment="Right" Width="330" Background="#363636">
+            <Button Name="ShowDevToolsBtn" Content="Show DevTools" Click="ShowDevToolsBtn_Click" Width="100" />
+            <Button Name="TestBtn" Content="Test" Click="TestBtn_Click" Width="100" />
+            <Button Name="AnalyzeBtn" Content="Analyze" Click="AnalyzeBtn_Click" Width="100" />
+            <Label Name="GameStatusLabel" Content="Waiting For The Game" Foreground="White" HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</Window>
