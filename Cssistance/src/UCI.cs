@@ -32,24 +32,25 @@ namespace Cssistance.src
             SendCommand("ucinewgame");
             SendCommand("position fen " +FEN);
             SendCommand("go movetime 3000");
+            Thread BrowserUIDrawer = new Thread(IndicateMove);
+            BrowserUIDrawer.Start();
         }
 
-        public void StartEngine(string enginePath)
+        private void IndicateMove()
         {
-            stockfishProcess = new Process();
-            stockfishProcess.StartInfo.FileName = enginePath;
-            stockfishProcess.StartInfo.UseShellExecute = false;
-            stockfishProcess.StartInfo.RedirectStandardInput = true;
-            stockfishProcess.StartInfo.RedirectStandardOutput = true;
-            stockfishProcess.StartInfo.RedirectStandardError = true; // Redirect standard error for error handling
-            stockfishProcess.Start();
-
-            stockfishInput = stockfishProcess.StandardInput;
-            stockfishOutput = stockfishProcess.StandardOutput;
-
-            // Important: Wait for the engine to be ready before sending commands
-            SendCommand("uci");
-            WaitForReady();
+            while (true)
+            {
+                if (Board.BestMove != null)
+                {
+                    BoardManager.ClearIndications();
+                    BoardManager.DrawIndication(Board.BestMove);
+                    Console.WriteLine("Ok found bestmove injected js.");
+                    Board.BestMove = null;
+                    break;
+                }
+                Thread.Sleep(100);
+            }
+            return;
         }
 
         public void SendCommand(string command)
@@ -114,8 +115,17 @@ namespace Cssistance.src
         //Added this method, which prints out the data received
         private void engineOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
-            if (!string.IsNullOrEmpty(outLine.Data))
+            string Output = outLine.Data;
+
+            if (!string.IsNullOrEmpty(Output))
             {
+                if (Output.Contains("bestmove"))
+                {
+                    Output = Output.Substring(Output.IndexOf(' ') + 1);
+                    Output = Output.Substring(0, Output.IndexOf(' '));
+                    Board.BestMove = Output;
+                }
+
                 Console.WriteLine(outLine.Data);
             }
         }

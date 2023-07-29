@@ -10,6 +10,8 @@ namespace Cssistance.src
     {
         public static SortedDictionary<int, int> Coords = new SortedDictionary<int, int>();
         public static string CurrentFEN = null;
+        public static string BestMove = null;
+        public static int ThinkTime = 3000;
         public static string ToFen(SortedDictionary<int, int> Coordination)
         {
             string FEN = "";

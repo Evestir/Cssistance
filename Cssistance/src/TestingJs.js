@@ -1,6 +1,6 @@
 (function () {
   const divs = document.getElementsByTagName('div'); 
-  const searchString = 'bp';
+  const searchString = {};
   let foundDiv = null;
   
   for (const div of divs) {
@@ -15,7 +15,7 @@
   }
   
   if (foundDiv) {
-      var pattern = new RegExp("piece " + searchString + " square-");
+      var pattern = new RegExp("piece " + searchString + " square-", "g");
       return foundDiv.replace(pattern, '');
   } else {
       return "none";
@@ -90,3 +90,100 @@ if (textElements.length > 0) {
 } else {
   console.log('No elements found with the class "coordinate-light".');
 }
+
+(function () {
+  // Get the aboveDiv element
+  var aboveDiv = (function() {
+    var divs = document.getElementsByTagName("div");
+    for(var i = 0; i < divs.length; i++){
+      if (divs[i].classList.contains("square-88")){
+        return divs[i];
+      }
+    }
+    return null;
+  })();
+  var sdsdsdf = document.getElementById('board-layout-chessboard');
+
+  // Get its computed style (including padding and border)
+  // Get the width and height of aboveDiv including padding and border
+  var ComputedStyle = window.getComputedStyle(aboveDiv);
+
+  // Create the squareDiv dynamically
+  const squareDiv = document.createElement("div");
+  squareDiv.id = "squareDiv";
+  squareDiv.style.opacity = "0.4"
+  squareDiv.style.position = 'absolute';
+  squareDiv.style.left = '30px';
+  squareDiv.style.transform = ComputedStyle.transform;
+  squareDiv.style.width = ComputedStyle.width;
+  squareDiv.style.height = ComputedStyle.height;
+  squareDiv.style.backgroundColor = "red";
+  squareDiv.style.zIndex = "9999";
+
+  sdsdsdf.appendChild(squareDiv);
+})(); 
+
+(function () {
+  // Get the aboveDiv element
+  while (document.getElementById('squareDiv') != null){
+    document.getElementById('squareDiv').remove();
+  }
+})(); 
+
+
+(function() {
+  var divs = document.getElementsByTagName("div");
+  for(var i = 0; i < divs.length; i++){
+    if (divs[i].classList.contains("square-88")){
+      return divs[i];
+    }
+  }
+  return null;
+})();
+
+(function () {
+  // Get the aboveDiv element
+  var TargetPiece = (function() {
+    var divs = document.getElementsByTagName("div");
+    for(var i = 0; i < divs.length; i++){
+      if (divs[i].classList.contains('square-42')){
+        return divs[i];
+      }
+    }
+    return null;
+  })();
+  var sdsdsdf = document.getElementById('board-layout-chessboard');
+
+  // Get its computed style (including padding and border)
+  // Get the width and height of aboveDiv including padding and border
+  var ComputedStyle = window.getComputedStyle(TargetPiece);
+
+  // Create the squareDiv dynamically
+  const TargetPieceAbove = document.createElement("div");
+  TargetPieceAbove.id = "squareDiv";
+  TargetPieceAbove.style.pointerEvents = "none";
+  TargetPieceAbove.style.opacity = "0.4"
+  TargetPieceAbove.style.position = 'absolute';
+  TargetPieceAbove.style.left = '30px';
+  TargetPieceAbove.style.transform = ComputedStyle.transform;
+  TargetPieceAbove.style.width = ComputedStyle.width;
+  TargetPieceAbove.style.height = ComputedStyle.height;
+  TargetPieceAbove.style.backgroundColor = "red";
+  TargetPieceAbove.style.zIndex = "9999";
+
+  const TargetBlock = document.createElement("div");
+  TargetBlock.id = "squareDiv";
+  TargetBlock.style.pointerEvents = "none";
+  TargetBlock.style.opacity = "0.4"
+  TargetBlock.style.position = 'absolute';
+  TargetBlock.style.left = 30 + (parseFloat(ComputedStyle.width)*0) + 'px';
+  TargetBlock.style.top = -(parseFloat(ComputedStyle.width)*2) + 'px';
+  TargetBlock.style.transform = ComputedStyle.transform;
+  TargetBlock.style.width = ComputedStyle.width;
+  TargetBlock.style.height = ComputedStyle.height;
+  TargetBlock.style.backgroundColor = "red";
+  TargetBlock.style.zIndex = "9999";
+
+  sdsdsdf.appendChild(TargetBlock);
+  sdsdsdf.appendChild(TargetPieceAbove);
+})(); 

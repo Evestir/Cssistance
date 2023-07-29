@@ -84,7 +84,8 @@ namespace Cssistance
             AllocConsole();
             UseImmersiveDarkMode(new WindowInteropHelper(this).EnsureHandle(), true);
             BrowserIns = Browser;
-            GetEnginesReady();
+            CheckEngines();
+            this.BestMoveLabel.Content = Board.BestMove;
         }
 
         public void Notify(string message, int second)
@@ -104,33 +105,7 @@ namespace Cssistance
 
         private void TestBtn_Click(object sender, RoutedEventArgs e)
         {
-            CheckEngines();
-        }
-
-        private void BrowserContainer_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Console.WriteLine("dsfdsfdsfd");
-
-            if (Browser.Address != LastSavedURL)
-            {
-                Thread.Sleep(1000);
-
-                BoardManager.SetMySide();
-                LastSavedURL = Browser.Address;
-
-                switch (BoardManager.GameStatus)
-                {
-                    case "White":
-                        GameStatusLabel.Content = "White";
-                        break;
-                    case "Black":
-                        GameStatusLabel.Content = "Black";
-                        break;
-                    case "GameNotInit":
-                        GameStatusLabel.Content = "White";
-                        break;
-                }
-            }
+            Browser.ShowDevTools();
         }
 
         [DllImport("shlwapi.dll")]
@@ -161,14 +136,14 @@ namespace Cssistance
             Console.WriteLine(Board.CurrentFEN);
             UCI UCIProc = new UCI();
 
-            UCIProc.BestMove(3000, Board.CurrentFEN, "\\Engines\\"+ Engines.Engine);
+            UCIProc.BestMove(3000, Board.CurrentFEN, Engines.Engine);
         }
 
         private void EnginesChoice_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (EnginesChoice.SelectedItem != null)
             {
-                Engines.Engine = EnginesChoice.SelectedItem.ToString();
+                Engines.Engine = @"Engines\" + EnginesChoice.SelectedItem.ToString() + ".exe";
             }
         }
 
@@ -180,12 +155,25 @@ namespace Cssistance
 
             string[] Cengines = Directory.GetFiles(EnginePath);
             Notify("ℹ️ Found Engine(s)", 1);
+            var last = Cengines.Last();
             foreach (string engine in Cengines)
             {
                 Console.Write(engine);
-                this.EnginesChoice.Items.Add(System.IO.Path.GetFileNameWithoutExtension(engine));
+                var selected = this.EnginesChoice.Items.Add(System.IO.Path.GetFileNameWithoutExtension(engine));
+                if (engine == last) {
+                    this.EnginesChoice.SelectedValue = (selected);
+                }
             }
             Console.Write('\n');
+        }
+
+        private void ThinkTimeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string ThinkTime = ThinkTimeBox.Text;
+            if (ThinkTime != null && ThinkTime != "")
+            {
+                Board.ThinkTime = Convert.ToInt32(ThinkTime.Substring(0, ThinkTime.LastIndexOf('m')));
+            }
         }
     }
 }

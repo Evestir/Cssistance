@@ -43,7 +43,7 @@ namespace Cssistance.src
         {
             string FoundPieceName = EvaluateJS(@"(function () {
               const divs = document.getElementsByTagName('div');
-              const searchString = '"+ query + @"';
+              const searchString = '" + query + @"';
               let foundDiv = null;
   
               for (const div of divs) {
@@ -174,7 +174,7 @@ namespace Cssistance.src
             if (Side == "True")
             {
                 Console.WriteLine("Ah! I see you're on white side!");
-                GameStatus = "White";          
+                GameStatus = "White";
             }
             else if (Side == "False")
             {
@@ -203,6 +203,91 @@ namespace Cssistance.src
             string result = string.Join("", matches);
 
             return int.Parse(result);
+        }
+
+        private static Dictionary<char, int> Alpha2Num = new Dictionary<char, int>
+        {
+            { 'a', 1 },
+            { 'b', 2 },
+            { 'c', 3 },
+            { 'd', 4 },
+            { 'e', 5 },
+            { 'f', 6 },
+            { 'g', 7 },
+            { 'h', 8 }
+        };
+            
+
+        public static void DrawIndication(string Notation)
+        {
+            string TargetPiece = "square-" + Alpha2Num[Notation[0]].ToString() + Notation[1].ToString();
+            int RelX = Alpha2Num[Notation[2]] - Alpha2Num[Notation[0]];
+            int RelY = Notation[3] - Notation[1];
+            if (GameStatus == "Black")
+            {
+                RelY = -RelY; 
+            }
+
+            Console.WriteLine(TargetPiece);
+            string DrawFirstOne = @"(function () {
+              // Get the aboveDiv element
+              var TargetPiece = (function() {
+                var divs = document.getElementsByTagName(""div"");
+                for(var i = 0; i < divs.length; i++){
+                  if (divs[i].classList.contains('" + TargetPiece + @"')){
+                    return divs[i];
+                  }
+                }
+                return null;
+              })();
+              var sdsdsdf = document.getElementById('board-layout-chessboard');
+
+              // Get its computed style (including padding and border)
+              // Get the width and height of aboveDiv including padding and border
+              var ComputedStyle = window.getComputedStyle(TargetPiece);
+
+              // Create the squareDiv dynamically
+              const TargetPieceAbove = document.createElement(""div"");
+              TargetPieceAbove.id = ""squareDiv"";
+              TargetPieceAbove.style.opacity = ""0.4""
+              TargetPieceAbove.style.position = 'absolute';
+              TargetPieceAbove.style.left = '33px';
+              TargetPieceAbove.style.transform = ComputedStyle.transform;
+              TargetPieceAbove.style.width = ComputedStyle.width;
+              TargetPieceAbove.style.height = ComputedStyle.height;
+              TargetPieceAbove.style.backgroundColor = ""red"";
+              TargetPieceAbove.style.zIndex = ""9999"";
+
+              const TargetBlock = document.createElement(""div"");
+              TargetBlock.id = ""squareDiv"";
+              TargetBlock.style.opacity = ""0.4""
+              TargetBlock.style.position = 'absolute';
+              TargetBlock.style.left = (33 + (parseFloat(ComputedStyle.width)*" + RelX + @")) + 'px';
+              TargetBlock.style.top = -(parseFloat(ComputedStyle.width)*" + RelY + @") + 'px';
+              TargetBlock.style.transform = ComputedStyle.transform;
+              TargetBlock.style.width = ComputedStyle.width;
+              TargetBlock.style.height = ComputedStyle.height;
+              TargetBlock.style.backgroundColor = ""red"";
+              TargetBlock.style.zIndex = ""9999"";
+              TargetPieceAbove.style.pointerEvents = 'none';
+              TargetBlock.style.pointerEvents = 'none';
+
+              sdsdsdf.appendChild(TargetBlock);
+              sdsdsdf.appendChild(TargetPieceAbove);
+            })(); ";
+            
+            EvaluateJS(DrawFirstOne);
+        }
+
+        public static void ClearIndications()
+        {
+            string Script = @"(function () {
+              while (document.getElementById('squareDiv') != null){
+                document.getElementById('squareDiv').remove();
+              }
+            })();";
+
+            EvaluateJS(Script);
         }
     }
 }

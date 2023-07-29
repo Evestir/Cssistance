@@ -14,31 +14,40 @@
     <Grid x:Name="MainGrid" Background="#242424">
         <Grid Name="BrowserContainer" Margin="0 0 330 0" Background="#242424" Width="Auto" >
             <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0,1">
-                <hwndhost:ChromiumWebBrowser x:Name="Browser" Address="https://www.chess.com" UIElement.PreviewMouseDown="BrowserContainer_PreviewMouseDown"/>
+                <hwndhost:ChromiumWebBrowser x:Name="Browser" Address="https://www.chess.com"/>
             </Border>
         </Grid>
         <Grid Name="OptionControls" HorizontalAlignment="Right" Width="330" Background="#363636">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="80"/>
                 <RowDefinition Height="200"/>
                 <RowDefinition Height="186"/>
             </Grid.RowDefinitions>
             <Button Name="ShowDevToolsBtn" Content="Show DevTools" Click="ShowDevToolsBtn_Click" Width="100" />
             <Button Name="TestBtn" Content="Test" Click="TestBtn_Click" Width="100" />
             <Grid Grid.Row="2">
-                <materialDesign:Card Padding="32" Margin="16">
-                    <ListBox x:Name="EnginesChoice" HorizontalAlignment="Center" SelectionChanged="EnginesChoice_SelectionChanged" Style="{StaticResource MaterialDesignChoiceChipListBox}"/>
-                </materialDesign:Card>
-            </Grid>
-            <Grid Grid.Row="3">
-                <Button Name="AnalyzeBtn" Style="{DynamicResource MaterialDesignRaisedButton}" Foreground="#CBE4DE" Background="#454441" BorderThickness="0" Height="23" Content="{materialDesign:PackIcon Kind=Magnify}" Click="AnalyzeBtn_Click" Width="200" 
+                <materialDesign:Card Margin="6">
+                    <Grid>
+                        <ListBox Name="EnginesChoice" Margin="0 2 0 0" HorizontalAlignment="Center" VerticalAlignment="Top" SelectionChanged="EnginesChoice_SelectionChanged" Style="{StaticResource MaterialDesignChoiceChipListBox}"/>
+                        <ComboBox Margin="10 34 10 0" Name="ThinkTimeBox" SelectionChanged="ThinkTimeBox_SelectionChanged"  materialDesign:HintAssist.Hint="Think Time" VerticalAlignment="Top" materialDesign:HintAssist.IsFloating="True" MaxDropDownHeight="200" Foreground="#CBE4DE">
+                            <ComboBoxItem Content="1000ms" />
+                            <ComboBoxItem Content="2000ms" />
+                            <ComboBoxItem Content="3000ms" IsSelected="True"/>
+                            <ComboBoxItem Content="4000ms" />
+                            <ComboBoxItem Content="5000ms" />
+                            <ComboBoxItem Content="6000ms" />
+                            <ComboBoxItem Content="7000ms" />
+                        </ComboBox>
+                        <Button Name="AnalyzeBtn" Style="{DynamicResource MaterialDesignRaisedButton}" Margin="0 23 0 0" Foreground="#CBE4DE" Background="#454441" BorderThickness="0" Height="23" Content="{materialDesign:PackIcon Kind=Magnify}" Click="AnalyzeBtn_Click" Width="200" 
                         xf:Animations.StartWith="{xf:Animate BasedOn={StaticResource Expand}}"
                         xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Contract}, Event=MouseEnter}"
                         xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Expand}, Event=MouseLeave}"/>
+                        <Label Name="BestMoveLabel" Content="3333" Foreground="#CBE4DE" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 140 0 0"/>
+                    </Grid>
+                </materialDesign:Card>
             </Grid>
-            <Grid Grid.Row="4">
+            <Grid Grid.Row="3">
                 <Grid.Effect>
                     <DropShadowEffect
                         BlurRadius="30"
