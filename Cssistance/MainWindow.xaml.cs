@@ -1,10 +1,14 @@
 ﻿using CefSharp;
 using Cssistance.src;
+using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -20,6 +24,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Cssistance
 {
@@ -79,6 +84,12 @@ namespace Cssistance
             AllocConsole();
             UseImmersiveDarkMode(new WindowInteropHelper(this).EnsureHandle(), true);
             BrowserIns = Browser;
+            GetEnginesReady();
+        }
+
+        public void Notify(string message, int second)
+        {
+            Snackbar.MessageQueue?.Enqueue(message, null, null, null, false, true, TimeSpan.FromSeconds(second));
         }
 
         public static CefSharp.Wpf.HwndHost.ChromiumWebBrowser BrowserIns;
@@ -93,14 +104,7 @@ namespace Cssistance
 
         private void TestBtn_Click(object sender, RoutedEventArgs e)
         {
-            Board.Coords = new SortedDictionary<int, int>();
-
-            BoardManager.SetMySide();
-            BoardManager.FindPieces();
-
-            Board.CurrentFEN = Board.ToFen(Board.Coords);
-
-            Console.WriteLine(Board.CurrentFEN);
+            CheckEngines();
         }
 
         private void BrowserContainer_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -129,11 +133,59 @@ namespace Cssistance
             }
         }
 
+        [DllImport("shlwapi.dll")]
+        public static extern bool PathIsDirectoryEmpty(string pszPath);
+
+        private void CheckEngines()
+        {
+            if (Directory.Exists(@"Engines\") && Directory.EnumerateFileSystemEntries(@"Engines\").Any())
+            {
+                GetEnginesReady();
+            }
+            else
+            {
+                Notify("⚠️ Engine Not Found", 1);
+                Directory.CreateDirectory(@"Engines\");
+            }
+        }
+
         private void AnalyzeBtn_Click(object sender, RoutedEventArgs e)
         {
+            Board.Coords = new SortedDictionary<int, int>();
+
+            BoardManager.SetMySide();
+            BoardManager.FindPieces();
+
+            Board.CurrentFEN = Board.ToFen(Board.Coords);
+
+            Console.WriteLine(Board.CurrentFEN);
             UCI UCIProc = new UCI();
 
-            UCIProc.BestMove(3000, Board.CurrentFEN, "C:\\Users\\vesitte\\Desktop\\Cssistance\\Cssistance\\bin\\Debug\\net6.0-windows\\Engines\\stockfish-windows-x86-64-avx2.exe");
+            UCIProc.BestMove(3000, Board.CurrentFEN, "\\Engines\\"+ Engines.Engine);
+        }
+
+        private void EnginesChoice_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (EnginesChoice.SelectedItem != null)
+            {
+                Engines.Engine = EnginesChoice.SelectedItem.ToString();
+            }
+        }
+
+        public void GetEnginesReady()
+        {
+            string EnginePath = @"Engines\";
+
+            this.EnginesChoice.Items.Clear();
+
+            string[] Cengines = Directory.GetFiles(EnginePath);
+            Notify("ℹ️ Found Engine(s)", 1);
+            foreach (string engine in Cengines)
+            {
+                Console.Write(engine);
+                this.EnginesChoice.Items.Add(System.IO.Path.GetFileNameWithoutExtension(engine));
+            }
+            Console.Write('\n');
         }
     }
 }

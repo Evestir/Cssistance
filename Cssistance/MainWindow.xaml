@@ -3,22 +3,54 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:cef="clr-namespace:CefSharp;assembly=CefSharp.Core"
+        xmlns:xf="clr-namespace:XamlFlair;assembly=XamlFlair.WPF"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         xmlns:hwndhost="clr-namespace:CefSharp.Wpf.HwndHost;assembly=CefSharp.Wpf.HwndHost"
         xmlns:local="clr-namespace:Cssistance"
         mc:Ignorable="d"
         Title="Cssistance" Height="957" Width="1540">
-    <Grid Background="#242424">
+    <Grid x:Name="MainGrid" Background="#242424">
         <Grid Name="BrowserContainer" Margin="0 0 330 0" Background="#242424" Width="Auto" >
             <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0,1">
                 <hwndhost:ChromiumWebBrowser x:Name="Browser" Address="https://www.chess.com" UIElement.PreviewMouseDown="BrowserContainer_PreviewMouseDown"/>
             </Border>
         </Grid>
-        <StackPanel Name="OptionControls" HorizontalAlignment="Right" Width="330" Background="#363636">
+        <Grid Name="OptionControls" HorizontalAlignment="Right" Width="330" Background="#363636">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="80"/>
+                <RowDefinition Height="200"/>
+                <RowDefinition Height="186"/>
+            </Grid.RowDefinitions>
             <Button Name="ShowDevToolsBtn" Content="Show DevTools" Click="ShowDevToolsBtn_Click" Width="100" />
             <Button Name="TestBtn" Content="Test" Click="TestBtn_Click" Width="100" />
-            <Button Name="AnalyzeBtn" Content="Analyze" Click="AnalyzeBtn_Click" Width="100" />
-            <Label Name="GameStatusLabel" Content="Waiting For The Game" Foreground="White" HorizontalAlignment="Center"/>
-        </StackPanel>
+            <Grid Grid.Row="2">
+                <materialDesign:Card Padding="32" Margin="16">
+                    <ListBox x:Name="EnginesChoice" HorizontalAlignment="Center" SelectionChanged="EnginesChoice_SelectionChanged" Style="{StaticResource MaterialDesignChoiceChipListBox}"/>
+                </materialDesign:Card>
+            </Grid>
+            <Grid Grid.Row="3">
+                <Button Name="AnalyzeBtn" Style="{DynamicResource MaterialDesignRaisedButton}" Foreground="#CBE4DE" Background="#454441" BorderThickness="0" Height="23" Content="{materialDesign:PackIcon Kind=Magnify}" Click="AnalyzeBtn_Click" Width="200" 
+                        xf:Animations.StartWith="{xf:Animate BasedOn={StaticResource Expand}}"
+                        xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Contract}, Event=MouseEnter}"
+                        xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Expand}, Event=MouseLeave}"/>
+            </Grid>
+            <Grid Grid.Row="4">
+                <Grid.Effect>
+                    <DropShadowEffect
+                        BlurRadius="30"
+                        Direction="0"
+                        Opacity="1"
+                        Color="#000000"/>
+                </Grid.Effect>
+                <Image gif:ImageBehavior.AnimatedSource="{StaticResource ImagePlaceHolder}" Height="190">
+                </Image>
+                <Label Name="GameStatusLabel" Content="Waiting For The Game" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <materialDesign:Snackbar VerticalAlignment="Bottom" Margin="0 0 0 0" HorizontalAlignment="Stretch" IsActive="False" MessageQueue="{materialDesign:MessageQueue}" Name="Snackbar" Background="#202020" Foreground="#CBE4DE"/>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
